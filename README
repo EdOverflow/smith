@@ -1,0 +1,78 @@
+
+
+                               /$$   /$$     /$$      
+                              |__/  | $$    | $$      
+        /$$$$$$$ /$$$$$$/$$$$  /$$ /$$$$$$  | $$$$$$$ 
+       /$$_____/| $$_  $$_  $$| $$|_  $$_/  | $$__  $$
+      |  $$$$$$ | $$ \ $$ \ $$| $$  | $$    | $$  \ $$
+       \____  $$| $$ | $$ | $$| $$  | $$ /$$| $$  | $$
+       /$$$$$$$/| $$ | $$ | $$| $$  |  $$$$/| $$  | $$
+      |_______/ |__/ |__/ |__/|__/   \___/  |__/  |__/
+
+        Simple meg wrapper to sieve through meg's
+        output.
+
+
+Initial set-up one-liner
+
+  This will clone this repository and then move all scripts to 
+  /usr/local/bin.
+
+    $ git clone git@github.com:EdOverflow/smith.git \
+      && cp smith/smith /usr/local/bin/ \
+      && echo "You can delete the ./smith/ folder now."
+
+Dependencies
+
+  - meg (https://github.com/tomnomnom/meg)
+
+Usage
+
+    $ smith <host>
+    $ smith http.//example.com
+
+    or
+
+    $ smith <list of hosts>
+    $ smith list.txt
+
+Contributing
+
+  I welcome contributions from the public. The issue tracker is
+  the preferred channel for bug reports and feature requests. 
+  The bug tracker utilises several labels to help organise and 
+  identify issues. Whenever submitting a new issue, please use 
+  the GitHub issue search first — check if the issue has already 
+  been reported.
+
+  Make sure to run https://github.com/koalaman/shellcheck when you 
+  are done editing or create a shell script. This will help 
+  maintain clean and uniform code throughout the project.
+
+  If you would like to submit a patch via email, that is fine too.
+  Just run the following command and send the patch to contact 
+  [at] edoverflow [dot] com:
+
+    $ git format-patch -<n> <SHA1>
+
+Legal Disclaimer
+
+  This project is made for educational and ethical testing purposes 
+  only. Usage of this tool for attacking targets without prior mutual 
+  consent is illegal. Developers assume no liability and are not 
+  responsible for any misuse or damage caused by these scripts.
+
+Donations
+
+  If you would like to support my work, you can use any of the 
+  addresses below:
+
+  Liberapay: https://liberapay.com/EdOverflow
+
+  Bitcoin: 1E2fZRNrrkCKPnWpKZAsJzByBoyoBURADN
+
+  Ethereum: 0xe98FC23fB4A8762d700c0354979dA5Db6c29Acc3
+
+License
+
+  MIT License — Copyright (c) 2018 EdOverflow

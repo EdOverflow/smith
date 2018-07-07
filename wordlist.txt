@@ -1,0 +1,9 @@
+/webstats/
+/explore
+/explore/repos
+/phpinfo.php
+/info.php
+/phptest.php
+/.ssh/id_rsa
+/.ssh/id_rsa.pub
+/cgi-bin/printenv.pl
