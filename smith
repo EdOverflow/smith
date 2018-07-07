@@ -1,5 +1,8 @@
 #!/bin/bash
 
+GREEN='\033[0;32m'
+END='\033[0m'
+
 if [[ $1 == "" ]] || [[ $1 == "-h" ]] || [[ $1 == "--help" ]]; then
 	echo "smith <host>"
 	echo "smith http.//example.com"
@@ -9,10 +12,10 @@ if [[ $1 == "" ]] || [[ $1 == "-h" ]] || [[ $1 == "--help" ]]; then
 	exit 1
 fi
 
-meg -d 100 -c 200 wordlist.txt "$1"
+meg -d 100 -c 200 wordlist.txt "$1" 2> /dev/null
 
 search() {
-	results=$(grep -rli "$1" out)
+	results=$(grep -rliE "$1" out)
 	if [[ -n "$results" ]]; then
 		while read -r url; do
 			head -1 "$url";
@@ -20,30 +23,38 @@ search() {
 	fi
 }
 
-echo "==> Webalizer Instances <=="
+echo -e "${GREEN}==> Webalizer Instances <==${END}"
 search "webalizer"
 echo
 
-echo "==> GitLab Instances <=="
+echo -e "${GREEN}==> GitLab Instances <==${END}"
 search "Explore GitLab"
 echo
 
-echo "==> Gitea Instances <=="
+echo -e "${GREEN}==> Gitea Instances <==${END}"
 search "Gitea Version:"
 echo
 
-echo "==> phpinfo() pages <=="
+echo -e "${GREEN}==> phpinfo() pages <==${END}"
 search "PHP Version"
 echo
 
-echo "==> Public ssh keys <=="
+echo -e "${GREEN}==> Public ssh keys <==${END}"
 search "ssh-rsa"
 echo
 
-echo "==> Apache Server Status files <=="
+echo -e "${GREEN}==> Apache Server Status files <==${END}"
 search "Apache Server Status for"
 echo
 
-echo "==> Perl CGI environment variables <=="
+echo -e "${GREEN}==> Perl CGI environment variables <==${END}"
 search "GATEWAY_INTERFACE=\"CGI"
+echo
+
+echo -e "${GREEN}==> CRLF injection vulnerabilities <==${END}"
+search "< Set-Cookie: ?crlf"
+echo
+
+echo -e "${GREEN}==> Open redirect vulnerabilities <==${END}"
+search '< location: (https?:)?[/\\]{2,}example.com'
 echo
