@@ -29,7 +29,7 @@ Dependencies
 Usage
 
     $ smith <host>
-    $ smith http.//example.com
+    $ smith http://example.com
 
     or
 
