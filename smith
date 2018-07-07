@@ -19,42 +19,38 @@ search() {
 	if [[ -n "$results" ]]; then
 		while read -r url; do
 			head -1 "$url";
+			echo;
 		done <<< "$results"
 	fi
 }
 
-echo -e "${GREEN}==> Webalizer Instances <==${END}"
+spit() {
+	echo -e "${GREEN}==> $1 <==${END}"
+}
+
+spit "Webalizer Instances"
 search "webalizer"
-echo
 
-echo -e "${GREEN}==> GitLab Instances <==${END}"
+spit "GitLab Instances"
 search "Explore GitLab"
-echo
 
-echo -e "${GREEN}==> Gitea Instances <==${END}"
+spit "Gitea Instances"
 search "Gitea Version:"
-echo
 
-echo -e "${GREEN}==> phpinfo() pages <==${END}"
+spit "phpinfo() pages"
 search "PHP Version"
-echo
 
-echo -e "${GREEN}==> Public ssh keys <==${END}"
+spit "Public ssh keys"
 search "ssh-rsa"
-echo
 
-echo -e "${GREEN}==> Apache Server Status files <==${END}"
+spit "Apache Server Status files"
 search "Apache Server Status for"
-echo
 
-echo -e "${GREEN}==> Perl CGI environment variables <==${END}"
+spit "Perl CGI environment variables"
 search "GATEWAY_INTERFACE=\"CGI"
-echo
 
-echo -e "${GREEN}==> CRLF injection vulnerabilities <==${END}"
+spit "CRLF injection vulnerabilities"
 search "< Set-Cookie: ?crlf"
-echo
 
-echo -e "${GREEN}==> Open redirect vulnerabilities <==${END}"
+spit "Open redirect vulnerabilities"
 search '< location: (https?:)?[/\\]{2,}example.com'
-echo
