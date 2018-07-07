@@ -5,7 +5,7 @@ END='\033[0m'
 
 if [[ $1 == "" ]] || [[ $1 == "-h" ]] || [[ $1 == "--help" ]]; then
 	echo "smith <host>"
-	echo "smith http.//example.com"
+	echo "smith http://example.com"
 	echo "or"
 	echo "smith <list of hosts>"
 	echo "smith list.txt"
@@ -42,6 +42,12 @@ search "PHP Version"
 
 spit "Public ssh keys"
 search "ssh-rsa"
+
+spit "Phppgadmin instance"
+search "phppgadmin:"
+
+spit "etc/passwd"
+search "root:x:0:0:root:/root:/bin/bash"
 
 spit "Apache Server Status files"
 search "Apache Server Status for"
