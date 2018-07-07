@@ -19,8 +19,8 @@ search() {
 	if [[ -n "$results" ]]; then
 		while read -r url; do
 			head -1 "$url";
-			echo;
 		done <<< "$results"
+		echo
 	fi
 }
 
