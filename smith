@@ -19,8 +19,8 @@ search() {
 	if [[ -n "$results" ]]; then
 		while read -r url; do
 			head -1 "$url";
+			echo;
 		done <<< "$results"
-		echo
 	fi
 }
 
@@ -34,6 +34,12 @@ search "webalizer"
 spit "GitLab Instances"
 search "Explore GitLab"
 
+spit "Phppgadmin instance"
+search "phppgadmin:"
+
+spit "/etc/passwd"
+search "root:x:0:0:root:/root:/bin/bash"
+
 spit "Gitea Instances"
 search "Gitea Version:"
 
@@ -42,12 +48,6 @@ search "PHP Version"
 
 spit "Public ssh keys"
 search "ssh-rsa"
-
-spit "Phppgadmin instance"
-search "phppgadmin:"
-
-spit "etc/passwd"
-search "root:x:0:0:root:/root:/bin/bash"
 
 spit "Apache Server Status files"
 search "Apache Server Status for"
