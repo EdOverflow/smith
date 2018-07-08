@@ -37,8 +37,8 @@ search "Explore GitLab"
 spit "Phppgadmin instance"
 search "phppgadmin:"
 
-spit "/etc/passwd"
-search "root:x:0:0:root:/root:/bin/bash"
+spit "htaccess file"
+search "RewriteEngine"
 
 spit "Gitea Instances"
 search "Gitea Version:"
