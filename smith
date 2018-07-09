@@ -3,17 +3,9 @@
 GREEN='\033[0;32m'
 END='\033[0m'
 
-if [[ $1 == "" ]] || [[ $1 == "-h" ]] || [[ $1 == "--help" ]]; then
-	echo "smith <host>"
-	echo "smith http://example.com"
-	echo "or"
-	echo "smith <list of hosts>"
-	echo "smith list.txt"
-	exit 1
-fi
-
 meg -d 100 -c 200 wordlist.txt "$1" 2> /dev/null
 
+# Search through the out/ directory.
 search() {
 	results=$(grep -rliE "$1" out)
 	if [[ -n "$results" ]]; then
@@ -28,35 +20,91 @@ spit() {
 	echo -e "${GREEN}==> $1 <==${END}"
 }
 
-spit "Webalizer instances"
-search "webalizer"
+# This function handles all the files to look for
+# in the out/ directory.
+files() {
+	spit "Webalizer instances"
+	search "webalizer"
 
-spit "GitLab instances"
-search "Explore GitLab"
+	spit "GitLab instances"
+	search "Explore GitLab"
 
-spit "Phppgadmin instances"
-search "phppgadmin:"
+	spit "Phppgadmin instances"
+	search "phppgadmin:"
 
-spit "htaccess files"
-search "RewriteEngine"
+	spit "htaccess files"
+	search "RewriteEngine"
 
-spit "Gitea instances"
-search "Gitea Version:"
+	spit "Gitea instances"
+	search "Gitea Version:"
 
-spit "phpinfo() pages"
-search "PHP Version"
+	spit "phpinfo() pages"
+	search "PHP Version"
 
-spit "Public ssh keys"
-search "ssh-rsa"
+	spit "Public ssh keys"
+	search "ssh-rsa"
 
-spit "Apache Server Status files"
-search "Apache Server Status for"
+	spit "Apache Server Status files"
+	search "Apache Server Status for"
 
-spit "Perl CGI environment variables"
-search "GATEWAY_INTERFACE=\"CGI"
+	spit "Perl CGI environment variables"
+	search "GATEWAY_INTERFACE=\"CGI"
 
-spit "CRLF injection vulnerabilities"
-search "< Set-Cookie: ?crlf"
+	spit "Prometheus instances"
+	search "machine{name"
 
-spit "Open redirect vulnerabilities"
-search '< location: (https?:)?[/\\]{2,}example.com'
+	spit "GIT configuration files"
+	search "\[remote \"origin\"\]"
+
+	spit "Wordpress configuration files"
+	search "define\('WP_HOME"
+
+	spit "Jenkins instances"
+	search "stage\('Build'\)"
+
+	spit "Gemfiles"
+	search "gem '"
+
+	spit "Gemfile.lock files"
+	search "BUNDLED WITH"
+
+	spit "PhpMyAdmin instances"
+	search "Welcome to phpmyadmin"
+}
+
+# This functions looks for actual security vulnerabilities.
+vulnerabilities() {
+	spit "CRLF injection vulnerabilities"
+	search "< Set-Cookie: ?crlf"
+
+	spit "Open redirect vulnerabilities"
+	search '< location: (https?:)?[/\\]{2,}example.com'
+}
+
+# This sort of acts as the main() function.
+if [[ $1 == "" ]] || [[ $1 == "-h" ]] || [[ $1 == "--help" ]]; then
+	echo """
+smith <host> <option>
+    smith http://example.com
+    smith http://example.com -f
+    smith http://example.com -v
+
+smith <list of hosts> <option>
+    smith list.txt
+
+-f  Only scan for files.
+-v  Only scan for vulnerabilities.
+	"""
+	exit 1
+elif [[ $3 == "-f" ]]; then
+	# Only scan for files.
+	files
+elif [[ $3 == "-v" ]]; then
+	# Only scan for vulnerabilities.
+	vulnerabilities
+else
+	# If no flag is specified, just perform a general
+	# scan with all available options.
+	files
+	vulnerabilities
+fi

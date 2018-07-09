@@ -9,6 +9,14 @@
 /.ssh/id_rsa
 /.ssh/id_rsa.pub
 /cgi-bin/printenv.pl
+/metrics
+/.git
+/.git/config
+/wp-config.php
+/Jenkinsfile
+/Gemfile
+/Gemfile.lock
+/phpmyadmin/
 /%%0a0aSet-Cookie:crlf=injection
 /%0aSet-Cookie:crlf=injection
 /%0d%0aSet-Cookie:crlf=injection
