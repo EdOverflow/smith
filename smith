@@ -5,7 +5,7 @@ END='\033[0m'
 
 if [[ $1 == "" ]] || [[ $1 == "-h" ]] || [[ $1 == "--help" ]]; then
 	echo "smith <host>"
-	echo "smith http.//example.com"
+	echo "smith http://example.com"
 	echo "or"
 	echo "smith <list of hosts>"
 	echo "smith list.txt"
@@ -28,13 +28,19 @@ spit() {
 	echo -e "${GREEN}==> $1 <==${END}"
 }
 
-spit "Webalizer Instances"
+spit "Webalizer instances"
 search "webalizer"
 
-spit "GitLab Instances"
+spit "GitLab instances"
 search "Explore GitLab"
 
-spit "Gitea Instances"
+spit "Phppgadmin instances"
+search "phppgadmin:"
+
+spit "htaccess files"
+search "RewriteEngine"
+
+spit "Gitea instances"
 search "Gitea Version:"
 
 spit "phpinfo() pages"

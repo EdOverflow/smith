@@ -4,6 +4,8 @@
 /phpinfo.php
 /info.php
 /phptest.php
+/.htaccess
+/phppgadmin
 /.ssh/id_rsa
 /.ssh/id_rsa.pub
 /cgi-bin/printenv.pl
