@@ -19,8 +19,8 @@ search() {
 	if [[ -n "$results" ]]; then
 		while read -r url; do
 			head -1 "$url";
-			echo;
 		done <<< "$results"
+		echo
 	fi
 }
 
@@ -28,19 +28,19 @@ spit() {
 	echo -e "${GREEN}==> $1 <==${END}"
 }
 
-spit "Webalizer Instances"
+spit "Webalizer instances"
 search "webalizer"
 
-spit "GitLab Instances"
+spit "GitLab instances"
 search "Explore GitLab"
 
-spit "Phppgadmin instance"
+spit "Phppgadmin instances"
 search "phppgadmin:"
 
-spit "htaccess file"
+spit "htaccess files"
 search "RewriteEngine"
 
-spit "Gitea Instances"
+spit "Gitea instances"
 search "Gitea Version:"
 
 spit "phpinfo() pages"
