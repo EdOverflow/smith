@@ -120,6 +120,21 @@ Word lists:
 	exit 1
 }
 
+# Check if meg is installed and ensure that the
+# list of hosts contains the protocol: 
+# https://github.com/tomnomnom/meg/issues/19.
+checkmeg() {
+	if [[ ! -x "$(command -v meg)" ]]; then
+		echo "You need to install meg in order to perform this task."
+		echo "https://github.com/tomnomnom/meg"
+		exit 1
+	elif head "$1" | grep -Ev "(http|https)://" > /dev/null; then
+		echo "Lines in the hosts file must specify the protocol."
+		echo "https://github.com/tomnomnom/meg/issues/19"
+		exit 1
+	fi
+}
+
 # This sort of acts as the main() function.
 if [[ $1 == "" ]] || [[ $1 == "-h" ]] || [[ $1 == "--help" ]]; then
 	error
@@ -134,6 +149,7 @@ elif [[ $1 == "search" ]]; then
 		error
 	fi
 elif [[ $2 == "-s" ]]; then
+	checkmeg "$1"
 	if [[ $3 == "crlf" ]]; then
 		# Use the rawhttp library for CRLF injection.
 		meg -d 100 -c 200 -r lists/crlf.txt "$1" 2> /dev/null
@@ -151,6 +167,7 @@ elif [[ $2 == "-s" ]]; then
 		error
 	fi
 else
+	checkmeg "$1"
 	read -p "Running a full scan can be quite slow. \
 Are you sure you want to proceed? (y/n) " -n 1 -r
 	echo
