@@ -3,8 +3,6 @@
 GREEN='\033[0;32m'
 END='\033[0m'
 
-meg -d 100 -c 200 wordlist.txt "$1" 2> /dev/null
-
 # Search through the out/ directory.
 search() {
 	results=$(grep -rliE "$1" out)
@@ -72,39 +70,102 @@ files() {
 	search "Welcome to phpmyadmin"
 }
 
-# This functions looks for actual security vulnerabilities.
-vulnerabilities() {
+crlf() {
 	spit "CRLF injection vulnerabilities"
 	search "< Set-Cookie: ?crlf"
+}
 
+openredirects() {
 	spit "Open redirect vulnerabilities"
 	search '< location: (https?:)?[/\\]{2,}example.com'
 }
 
-# This sort of acts as the main() function.
-if [[ $1 == "" ]] || [[ $1 == "-h" ]] || [[ $1 == "--help" ]]; then
+# This functions looks for actual security vulnerabilities.
+vulnerabilities() {
+	crlf
+	openredirects
+}
+
+error() {
 	echo """
-smith <host> <option>
-    smith http://example.com
-    smith http://example.com -f
-    smith http://example.com -v
+Simple wrapper for meg that sieves through meg's output for you.
 
-smith <list of hosts> <option>
-    smith list.txt
+Usage:
+	smith <host>
+	    smith http://example.com
 
--f  Only scan for files.
--v  Only scan for vulnerabilities.
+	smith <list of hosts>
+	    smith list.txt
+
+	smith <host or list of hosts> -s <scan type>
+		smith http://example.com -s crlf
+		smith http://example.com -s openredirects
+		smith http://example.com -s files
+
+	smith search <type>
+		smith search crlf
+
+	All types:
+		- crlf
+		- openredirects
+		- files
+
+Word lists:
+	All word lists are located under the lists/ directory.
+
+	- crlf.txt
+	- openredirects.txt
+	- wordlist.txt
 	"""
 	exit 1
-elif [[ $3 == "-f" ]]; then
-	# Only scan for files.
-	files
-elif [[ $3 == "-v" ]]; then
-	# Only scan for vulnerabilities.
-	vulnerabilities
+}
+
+# This sort of acts as the main() function.
+if [[ $1 == "" ]] || [[ $1 == "-h" ]] || [[ $1 == "--help" ]]; then
+	error
+elif [[ $1 == "search" ]]; then
+	if [[ $2 == "crlf" ]]; then
+		crlf
+	elif [[ $2 == "openredirects" ]]; then
+		openredirects
+	elif [[ $2 == "files" ]]; then
+		files
+	else
+		error
+	fi
+elif [[ $2 == "-s" ]]; then
+	if [[ $3 == "crlf" ]]; then
+		# Use the rawhttp library for CRLF injection.
+		meg -d 100 -c 200 -r lists/crlf.txt "$1" 2> /dev/null
+		crlf
+	elif [[ $3 == "openredirects" ]]; then
+		# Use Go HTTP client for the open redirects list.
+		meg -d 100 -c 200 lists/openredirects.txt "$1" 2> /dev/null
+		openredirects
+	elif [[ $3 == "files" ]]; then
+		# Use Go HTTP client for main word list.
+		meg -d 100 -c 200 lists/wordlist.txt "$1" 2> /dev/null
+		# Only scan for files.
+		files
+	else
+		error
+	fi
 else
-	# If no flag is specified, just perform a general
-	# scan with all available options.
-	files
-	vulnerabilities
+	read -p "Running a full scan can be quite slow. \
+Are you sure you want to proceed? (y/n) " -n 1 -r
+	echo
+	if [[ $REPLY =~ ^[Yy]$ ]]; then
+		# Use Go HTTP client for main word list.
+		meg -d 100 -c 200 lists/wordlist.txt "$1" 2> /dev/null
+		# Use Go HTTP client for the open redirects list.
+		meg -d 100 -c 200 lists/openredirects.txt "$1" 2> /dev/null
+		# Use the rawhttp library for CRLF injection.
+		meg -d 100 -c 200 -r lists/crlf.txt "$1" 2> /dev/null
+		# If no flag is specified, just perform a general
+		# scan with all available options.
+		files
+		vulnerabilities
+	else
+		exit 1
+	fi
 fi

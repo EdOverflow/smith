@@ -28,13 +28,32 @@ Dependencies
 
 Usage
 
-    $ smith <host>
-    $ smith http://example.com
+  smith <host>
+      smith http://example.com
 
-    or
+  smith <list of hosts>
+      smith list.txt
 
-    $ smith <list of hosts>
-    $ smith list.txt
+  smith <host or list of hosts> -s <scan type>
+    smith http://example.com -s crlf
+    smith http://example.com -s openredirects
+    smith http://example.com -s files
+
+  smith search <type>
+    smith search crlf
+
+  All types:
+    - crlf
+    - openredirects
+    - files
+
+Word lists
+
+  All word lists are located under the lists/ directory.
+
+  - crlf.txt
+  - openredirects.txt
+  - wordlist.txt
 
 Contributing
 
