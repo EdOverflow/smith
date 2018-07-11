@@ -72,7 +72,7 @@ files() {
 
 crlf() {
 	spit "CRLF injection vulnerabilities"
-	search "< Set-Cookie: ?crlf"
+	search "< x-smith: ?edoverflow"
 }
 
 openredirects() {
