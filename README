@@ -19,8 +19,7 @@ Initial set-up one-liner
   /usr/local/bin.
 
     $ git clone git@github.com:EdOverflow/smith.git \
-      && cp smith/smith /usr/local/bin/ \
-      && echo "You can delete the ./smith/ folder now."
+      && cp smith/smith /usr/local/bin/
 
 Dependencies
 
