@@ -33,17 +33,23 @@ Usage
   smith <list of hosts>
       smith list.txt
 
-  smith <host or list of hosts> -s <scan type>
-    smith http://example.com -s crlf
-    smith http://example.com -s openredirects
-    smith http://example.com -s files
+  The -s flag stands for 'scan'.
 
-  smith search <type>
-    smith search crlf
+  smith -s <scan type> <host or list of hosts>
+    smith -s crlf http://example.com
+    smith -s openredirects http://example.com
+    smith -s subdomaintakeovers http://example.com
+    smith -s files http://example.com
+
+  The -f flag stands for 'find'.
+
+  smith -f <type>
+    smith -f crlf
 
   All types:
     - crlf
     - openredirects
+    - subdomaintakeovers
     - files
 
 Word lists
@@ -51,6 +57,7 @@ Word lists
   All word lists are located under the lists/ directory.
 
   - crlf.txt
+  - crlf-special.txt
   - openredirects.txt
   - wordlist.txt
 
