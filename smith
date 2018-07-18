@@ -1,11 +1,55 @@
 #!/bin/bash
 
+# Variables
 GREEN='\033[0;32m'
 END='\033[0m'
+DELAY='100' # in milliseconds
+CONCURRENCY='200'
 
-# Search through the out/ directory.
-search() {
-	results=$(grep -rliE "$1" out)
+request() {
+	meg -d "$DELAY" -c "$CONCURRENCY" "$@"
+}
+
+# List created by https://github.com/tomnomnom/
+declare -A searches=(
+	# ["Search term"]="Name of the service"
+    ["There is no app configured at that hostname"]="Heroku"
+	["NoSuchBucket"]="AWS"
+	["No Such Account"]=""
+	["You're Almost There"]=""
+	["There's nothing here"]="Tumblr"
+	["The request could not be satisfied"]="Cloudfront"
+	["Your CNAME settings"]=""
+	["InvalidBucketName"]="AWS"
+	["PermanentRedirect"]="AWS"
+	["The specified bucket does not exist"]="AWS"
+	["Repository not found"]="Bitbucket"
+	["Bad Request: ERROR: The request could not be satisfied"]="Cloudfront"
+	["Sorry, We Couldn't Find That Page"]="AWS"
+	["Fastly error: unknown domain:"]="Fastly"
+	["The feed has not been found."]="Feedpress"
+	["The thing you were looking for is no longer here, or never was"]="Ghost"
+	["Please renew your subscription"]="Tilda"
+	["There isn't a Github Pages site here."]="Github"
+	["We could not find what you're looking for."]="Help Juice"
+	["No settings were found for this company:"]="Help Scout"
+	["No such app"]="Heroku"
+	["is not a registered InCloud YouTrack"]="JetBrains"
+	["Unrecognized domain"]="Mashery"
+	["Sorry, this shop is currently unavailable."]="Shopify"
+	["You are being redirected"]="Statuspage"
+	["project not found"]="Surge.sh"
+	["The requested URL was not found on this server."]="Unbounce"
+	["This UserVoice subdomain is currently available!"]="UserVoice"
+	["Do you want to register"]="Wordpress"
+	["Help Center Closed"]="Zendesk"
+)
+
+# Echo message and then grep through the out/ directory.
+test() {
+	# test <message> <term>
+	echo -e "${GREEN}==> $1 <==${END}"
+	results=$(grep -rliE "$2" out)
 	if [[ -n "$results" ]]; then
 		while read -r url; do
 			head -1 "$url";
@@ -14,76 +58,71 @@ search() {
 	fi
 }
 
-spit() {
-	echo -e "${GREEN}==> $1 <==${END}"
-}
+declare -A stuff=( 
+	# ["Search term"]="Name of the thing we are looking for"
+	["webalizer"]="Webalizer instances"
+	["Explore GitLab"]="GitLab instances"
+	["phppgadmin:"]="Phppgadmin instances"
+	["RewriteEngine"]="htaccess files"
+	["Gitea Version:"]="Gitea instances"
+	["PHP Version"]="phpinfo() pages"
+	["ssh-rsa"]="Public ssh keys"
+	["Apache Server Status for"]="Apache Server Status files"
+	["GATEWAY_INTERFACE=\"CGI"]="Perl CGI environment variables"
+	["machine{name"]="Prometheus instances"
+	["\[remote \"origin\"\]"]="GIT configuration files"
+	["define\('WP_HOME"]="Wordpress configuration files"
+	["stage\('Build'\)"]="Jenkins instances"
+	["gem '"]="Gemfiles"
+	["BUNDLED WITH"]="Gemfile.lock files"
+	["Welcome to phpmyadmin"]="PhpMyAdmin instances"
+)
 
 # This function handles all the files to look for
 # in the out/ directory.
 files() {
-	spit "Webalizer instances"
-	search "webalizer"
-
-	spit "GitLab instances"
-	search "Explore GitLab"
-
-	spit "Phppgadmin instances"
-	search "phppgadmin:"
-
-	spit "htaccess files"
-	search "RewriteEngine"
-
-	spit "Gitea instances"
-	search "Gitea Version:"
-
-	spit "phpinfo() pages"
-	search "PHP Version"
-
-	spit "Public ssh keys"
-	search "ssh-rsa"
-
-	spit "Apache Server Status files"
-	search "Apache Server Status for"
-
-	spit "Perl CGI environment variables"
-	search "GATEWAY_INTERFACE=\"CGI"
-
-	spit "Prometheus instances"
-	search "machine{name"
-
-	spit "GIT configuration files"
-	search "\[remote \"origin\"\]"
-
-	spit "Wordpress configuration files"
-	search "define\('WP_HOME"
-
-	spit "Jenkins instances"
-	search "stage\('Build'\)"
-
-	spit "Gemfiles"
-	search "gem '"
-
-	spit "Gemfile.lock files"
-	search "BUNDLED WITH"
-
-	spit "PhpMyAdmin instances"
-	search "Welcome to phpmyadmin"
+	for str in "${!stuff[@]}"; do 
+		test "${stuff[$message]}" "$message"; 
+	done
 }
 
+# Grep for CRLF injection vulnerabilities.
+# Payloads are in x-smith:edoverflow format to bypass
+# most exclusion lists.
 crlf() {
-	spit "CRLF injection vulnerabilities"
-	search "< x-smith: ?edoverflow"
+	test "CRLF injection vulnerabilities" "< x-smith: ?edoverflow"
 }
 
+# Grep for open redirects.
 openredirects() {
-	spit "Open redirect vulnerabilities"
-	search '< location: (https?:)?[/\\]{2,}example.com'
+	test "Open redirect vulnerabilities" '< location: (https?:)?[/\\]{2,}example.com'
+}
+
+# When it comes to subdomain takeovers, we output the results from
+# fetching the top-level directory into a separate directory called sub.
+# The reason behind this is because we often rely on 404 error codes
+# to find potential subdomain takeovers. So any 404s returned from the
+# other scanning options will return a lot of false-positives in this
+# function.
+subdomaintakeovers() {
+	echo -e "${GREEN}==> Potential subdomain takeovers <==${END}"
+	for str in "${!searches[@]}"; do 
+		RESULTS=$(grep -rliE "$str" sub)
+		if [[ -n "$RESULTS" ]]; then
+			while read -r url; do
+				line=$(head -1 "$url")
+				echo "Potential "${searches[$str]}" subdomain takeover on $line.";
+			done <<< "$RESULTS"
+			echo
+		fi
+	done
 }
 
 # This functions looks for actual security vulnerabilities.
 vulnerabilities() {
 	crlf
 	openredirects
+	subdomaintakeovers
 }
 
 error() {
@@ -97,23 +136,30 @@ Usage:
 	smith <list of hosts>
 	    smith list.txt
 
-	smith <host or list of hosts> -s <scan type>
-		smith http://example.com -s crlf
-		smith http://example.com -s openredirects
-		smith http://example.com -s files
+	The -s flag stands for 'scan'.
 
-	smith search <type>
-		smith search crlf
+	smith -s <scan type> <host or list of hosts>
+		smith -s crlf http://example.com
+		smith -s openredirects http://example.com
+		smith -s subdomaintakeovers http://example.com
+		smith -s files http://example.com
+
+	The -f flag stands for 'find'.
+
+	smith -f <type>
+		smith -f crlf
 
 	All types:
 		- crlf
 		- openredirects
+		- subdomaintakeovers
 		- files
 
 Word lists:
 	All word lists are located under the lists/ directory.
 
 	- crlf.txt
+	- crlf-special.txt
 	- openredirects.txt
 	- wordlist.txt
 	"""
@@ -131,58 +177,91 @@ checkmeg() {
 	fi
 }
 
+# Keeping the output from previous scans can skew your results and 
+# result in duplicates.
+empty() {
+	if [[ -d "out" ]]; then
+		read -p "Would you like to empty the out/ directory before scanning? (y/n) " REPLY
+		if [[ $REPLY =~ ^[Yy]$ ]]; then
+			rm -rf out/
+		fi
+	fi
+
+	if [[ -d "sub" ]]; then
+		read -p "Would you like to empty the sub/ directory before scanning? (y/n) " REPLY
+		if [[ $REPLY =~ ^[Yy]$ ]]; then
+			rm -rf sub/
+		fi
+	fi
+}
+
 # This sort of acts as the main() function.
 if [[ $1 == "" ]] || [[ $1 == "-h" ]] || [[ $1 == "--help" ]]; then
 	error
-elif [[ $1 == "search" ]]; then
+elif [[ $1 == "-f" ]]; then
+
+	#=================================================
+	# If nothing is specified, just perform a search 
+	# in the out/ directory.
+	#=================================================
+
 	if [[ $2 == "crlf" ]]; then
 		crlf
-	elif [[ $2 == "openredirects" ]]; then
+	elif [[ $2 == "openredirects" ]] || [[ $2 == "or" ]]; then
 		openredirects
+	elif [[ $2 == "subdomaintakeovers" ]]; then
+		subdomaintakeovers
 	elif [[ $2 == "files" ]]; then
 		files
 	else
 		error
 	fi
-elif [[ $2 == "-s" ]]; then
-	checkmeg "$1"
-	if [[ $3 == "crlf" ]]; then
+elif [[ $1 == "-s" ]]; then
+	checkmeg
+	empty
+
+	#=================================================
+	# These are the individual scanning options.
+	#=================================================
+
+	if [[ $2 == "crlf" ]]; then
 		# Use Go HTTP client for the usual CRLF payloads.
-		meg -d 100 -c 200 lists/crlf.txt "$1" 2> /dev/null
+		request lists/crlf.txt "$3" 2> /dev/null
 		# Use the rawhttp library for special CRLF injection cases.
-		meg -d 100 -c 200 -r lists/crlf-special.txt "$1" 2> /dev/null
+		request -r lists/crlf-special.txt "$3" 2> /dev/null
 		crlf
-	elif [[ $3 == "openredirects" ]]; then
+	elif [[ $2 == "openredirects" ]] || [[ $2 == "or" ]]; then
 		# Use Go HTTP client for the open redirects list.
-		meg -d 100 -c 200 lists/openredirects.txt "$1" 2> /dev/null
+		request lists/openredirects.txt "$3" 2> /dev/null
 		openredirects
-	elif [[ $3 == "files" ]]; then
+	elif [[ $2 == "subdomaintakeovers" ]]; then
+		request / "$3" sub 2> /dev/null
+		subdomaintakeovers
+	elif [[ $2 == "files" ]]; then
 		# Use Go HTTP client for main word list.
-		meg -d 100 -c 200 lists/wordlist.txt "$1" 2> /dev/null
-		# Only scan for files.
+		request lists/wordlist.txt "$3" 2> /dev/null
 		files
 	else
 		error
 	fi
 else
-	checkmeg "$1"
-	read -p "Running a full scan can be quite slow. \
-Are you sure you want to proceed? (y/n) " -n 1 -r
-	echo
-	if [[ $REPLY =~ ^[Yy]$ ]]; then
-		# Use Go HTTP client for main word list.
-		meg -d 100 -c 200 lists/wordlist.txt "$1" 2> /dev/null
-		# Use Go HTTP client for the open redirects list.
-		meg -d 100 -c 200 lists/openredirects.txt "$1" 2> /dev/null
-		# Use Go HTTP client for the usual CRLF payloads.
-		meg -d 100 -c 200 lists/crlf.txt "$1" 2> /dev/null
-		# Use the rawhttp library for special CRLF injection cases.
-		meg -d 100 -c 200 -r lists/crlf-special.txt "$1" 2> /dev/null
-		# If no flag is specified, just perform a general
-		# scan with all available options.
-		files
-		vulnerabilities
-	else
-		exit 1
-	fi
+	checkmeg
+	empty
+
+	#=================================================
+	# If no flag is specified, just perform a general
+	# scan with all available options.
+	#=================================================
+
+	# Use Go HTTP client for main word list.
+	request lists/wordlist.txt "$1" 2> /dev/null
+	# Use Go HTTP client for the open redirects list.
+	request lists/openredirects.txt "$1" 2> /dev/null
+	# Use Go HTTP client for the usual CRLF payloads.
+	request lists/crlf.txt "$1" 2> /dev/null
+	# Use the rawhttp library for special CRLF injection cases.
+	request -r lists/crlf-special.txt "$1" 2> /dev/null
+	request / "$1" sub 2> /dev/null
+	files
+	vulnerabilities
 fi
