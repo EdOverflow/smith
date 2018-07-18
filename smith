@@ -128,10 +128,6 @@ checkmeg() {
 		echo "You need to install meg in order to perform this task."
 		echo "https://github.com/tomnomnom/meg"
 		exit 1
-	elif head "$1" | grep -Ev "(http|https)://" > /dev/null; then
-		echo "Lines in the hosts file must specify the protocol."
-		echo "https://github.com/tomnomnom/meg/issues/19"
-		exit 1
 	fi
 }
 
@@ -151,8 +147,10 @@ elif [[ $1 == "search" ]]; then
 elif [[ $2 == "-s" ]]; then
 	checkmeg "$1"
 	if [[ $3 == "crlf" ]]; then
-		# Use the rawhttp library for CRLF injection.
-		meg -d 100 -c 200 -r lists/crlf.txt "$1" 2> /dev/null
+		# Use Go HTTP client for the usual CRLF payloads.
+		meg -d 100 -c 200 lists/crlf.txt "$1" 2> /dev/null
+		# Use the rawhttp library for special CRLF injection cases.
+		meg -d 100 -c 200 -r lists/crlf-special.txt "$1" 2> /dev/null
 		crlf
 	elif [[ $3 == "openredirects" ]]; then
 		# Use Go HTTP client for the open redirects list.
@@ -176,8 +174,10 @@ Are you sure you want to proceed? (y/n) " -n 1 -r
 		meg -d 100 -c 200 lists/wordlist.txt "$1" 2> /dev/null
 		# Use Go HTTP client for the open redirects list.
 		meg -d 100 -c 200 lists/openredirects.txt "$1" 2> /dev/null
-		# Use the rawhttp library for CRLF injection.
-		meg -d 100 -c 200 -r lists/crlf.txt "$1" 2> /dev/null
+		# Use Go HTTP client for the usual CRLF payloads.
+		meg -d 100 -c 200 lists/crlf.txt "$1" 2> /dev/null
+		# Use the rawhttp library for special CRLF injection cases.
+		meg -d 100 -c 200 -r lists/crlf-special.txt "$1" 2> /dev/null
 		# If no flag is specified, just perform a general
 		# scan with all available options.
 		files

@@ -1,4 +1,3 @@
-/%%0a0ax-smith:edoverflow
 /%0ax-smith:edoverflow
 /%0d%0ax-smith:edoverflow
 /%0dx-smith:edoverflow
@@ -14,4 +13,3 @@
 /%2F..%0d%0ax-smith:edoverflow
 /%3f%0d%0ax-smith:edoverflow
 /%3f%0dx-smith:edoverflow
-/%u000ax-smith:edoverflow
