@@ -13,7 +13,7 @@ request() {
 # List created by https://github.com/tomnomnom/
 declare -A searches=(
 	# ["Search term"]="Name of the service"
-    ["There is no app configured at that hostname"]="Heroku"
+	["There is no app configured at that hostname"]="Heroku"
 	["NoSuchBucket"]="AWS"
 	["No Such Account"]=""
 	["You're Almost There"]=""
