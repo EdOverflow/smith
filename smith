@@ -17,7 +17,7 @@ declare -A searches=(
 	["NoSuchBucket"]="AWS"
 	["No Such Account"]=""
 	["You're Almost There"]=""
-	["There's nothing here"]="Tumblr"
+	["There's nothing here"]="Azure"
 	["The request could not be satisfied"]="Cloudfront"
 	["Your CNAME settings"]=""
 	["InvalidBucketName"]="AWS"
@@ -82,7 +82,7 @@ declare -A stuff=(
 # in the out/ directory.
 files() {
 	for str in "${!stuff[@]}"; do 
-		test "${stuff[$message]}" "$message"; 
+		test "${stuff[$str]}" "$str";
 	done
 }
 
