@@ -48,9 +48,9 @@ declare -A searches=(
 # Echo message and then grep through the out/ directory.
 test() {
 	# test <message> <term>
-	echo -e "${GREEN}==> $1 <==${END}"
 	results=$(grep -rliE "$2" out)
 	if [[ -n "$results" ]]; then
+		echo -e "${GREEN}==> $1 <==${END}"
 		while read -r url; do
 			head -1 "$url";
 		done <<< "$results"
@@ -76,6 +76,8 @@ declare -A stuff=(
 	["gem '"]="Gemfiles"
 	["BUNDLED WITH"]="Gemfile.lock files"
 	["Welcome to phpmyadmin"]="PhpMyAdmin instances"
+	["phpMyAdmin - ChangeLog"]="PhpMyAdmin Changelogs"
+	["env</title>"]="Ruby on Rails environment variables"
 )
 
 # This function handles all the files to look for
