@@ -41,3 +41,11 @@
 /www/phpMyAdmin/index.php
 /xampp/phpmyadmin/index.php
 /env
+/application.wadl
+/.pgsql_history
+/.sqlite_history
+/.mysql_history
+/.bash_history
+/icingaweb2
+/solr
+/otrs
