@@ -43,6 +43,7 @@ declare -A searches=(
 	["This UserVoice subdomain is currently available!"]="UserVoice"
 	["Do you want to register"]="Wordpress"
 	["Help Center Closed"]="Zendesk"
+	["This domain is for sale"]="Domain for sale"
 )
 
 # Echo message and then grep through the out/ directory.
@@ -58,7 +59,7 @@ test() {
 	fi
 }
 
-declare -A stuff=( 
+declare -A stuff=(
 	# ["Search term"]="Name of the thing we are looking for"
 	["webalizer"]="Webalizer instances"
 	["Explore GitLab"]="GitLab instances"
@@ -78,12 +79,19 @@ declare -A stuff=(
 	["Welcome to phpmyadmin"]="PhpMyAdmin instances"
 	["phpMyAdmin - ChangeLog"]="PhpMyAdmin Changelogs"
 	["env</title>"]="Ruby on Rails environment variables"
+	["<resources base="]="Application.wadl file"
+	["SELECT \* FROM"]="Database history files"
+	["solr-spec"]="Apache Solr"
+	["icinga web 2"]="Icinga monitoring"
+	["cd \.\."]="Bash history"
+	["otrs-web"]="OTRS ticket system"
+	["Powered by Atlassian"]="Atlassian product"
 )
 
 # This function handles all the files to look for
 # in the out/ directory.
 files() {
-	for str in "${!stuff[@]}"; do 
+	for str in "${!stuff[@]}"; do
 		test "${stuff[$str]}" "$str";
 	done
 }
