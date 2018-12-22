@@ -62,6 +62,9 @@
 /https://example.com/%2f..
 /https://example.com//
 /https:example.com
+//example.com/..;/docs/config
+//example.com/..;/examples/jsp
+//example.com/..;/css
 /redirect?url=//example.com&next=//example.com&redirect=//example.com&redir=//example.com&rurl=//example.com&redirect_uri=//example.com
 /redirect?url=/\/example.com&next=/\/example.com&redirect=/\/example.com&redir=/\/example.com&rurl=/\/example.com&redirect_uri=/\/example.com
 /redirect?url=Https://example.com&next=Https://example.com&redirect=Https://example.com&redir=Https://example.com&rurl=Https://example.com&redirect_uri=Https://example.com
