@@ -34,8 +34,8 @@
 //example.com/%2f%2e%2e
 //example.com/%2f..
 //example.com//
-//google%00.com
-//google%E3%80%82com
+//example%00.com
+//example%E3%80%82com
 //https:///example.com/%2e%2e
 //https://example.com/%2e%2e%2f
 //https://example.com//
